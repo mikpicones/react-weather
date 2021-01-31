@@ -2,13 +2,14 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import dayjs from "dayjs";
-import { Box } from "@material-ui/core";
 import { getWeatherIcon } from "./WeatherCardContent";
 import { CardMedia } from "@material-ui/core";
 
+import Grid from "@material-ui/core/Grid";
+
 const useStyles = makeStyles({
   title: {
-    fontSize: 14,
+    fontSize: 18,
   },
   pos: {
     display: "flex",
@@ -17,8 +18,8 @@ const useStyles = makeStyles({
     justifyContent: "center",
   },
   icon: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     alignItems: "center",
   },
   desc: {
@@ -32,7 +33,15 @@ export default function WeatherForecast(props) {
 
   const formatDayCards = () => {
     return forecast.map((reading, index) => (
-      <Box component="div" key={index} className={classes.pos} width={500}>
+      <Grid
+        item
+        key={index}
+        xs={12}
+        sm={12}
+        md={12}
+        lg={2}
+        className={classes.pos}
+      >
         <Typography
           className={classes.title}
           color="textSecondary"
@@ -44,7 +53,7 @@ export default function WeatherForecast(props) {
           className={classes.icon}
           image={getWeatherIcon(reading.description)}
         />
-        <Typography variant="h5" component="h2">
+        <Typography variant="h4" component="h2">
           {Math.round(reading.temperature)}°C
         </Typography>
         <Typography className={classes.desc} variant="caption" display="block">
@@ -54,7 +63,7 @@ export default function WeatherForecast(props) {
           Min: {Math.round(reading.min)}°C
           <br /> Max: {Math.round(reading.max)}°C
         </Typography>
-      </Box>
+      </Grid>
     ));
   };
 

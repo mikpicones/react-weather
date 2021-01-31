@@ -7,6 +7,7 @@ import {
   fade,
 } from "@material-ui/core/styles";
 import { Box, Paper, Fade } from "@material-ui/core";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 import WeatherCard from "./WeatherCard.js";
 import Switch from "@material-ui/core/Switch";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,10 +16,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import Avatar from "@material-ui/core/Avatar";
-
+import Grid from "@material-ui/core/Grid";
 import InputBase from "@material-ui/core/InputBase";
-import weatherIcon from "./assets/rain-cloud-weather.gif";
+import Link from "@material-ui/core/Link";
+
+import movingclouds from "./assets/movingclouds.gif";
 
 const api = {
   key: "f42c45452f08a3f0bd20834e488686f9",
@@ -29,11 +31,31 @@ const useStyles = makeStyles((theme) => ({
   bgImage: {
     position: "relative",
   },
+  image: {
+    position: "absolute",
+    top: "45%",
+    left: "50%",
+    transform: " translate(-50%, -50%)",
+    width: 180,
+    height: 180,
+  },
   card: {
-    width: 900,
+    width: "auto",
+  },
+  body: {
+    height: "100vh",
+    [theme.breakpoints.down("md")]: {
+      height: "auto",
+    },
   },
   container: {
-    height: "90vh",
+    height: "auto",
+    [theme.breakpoints.down("sm")]: {
+      height: "auto",
+    },
+    [theme.breakpoints.up("lg")]: {
+      height: "80vh! important",
+    },
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -41,11 +63,16 @@ const useStyles = makeStyles((theme) => ({
   item: {
     width: "auto",
   },
+  copyright: {
+    height: "50px",
+    marginBottom: 10,
+  },
   btnToggle: {
     float: "right",
   },
   menu: {
     display: "flex",
+    padding: 10,
   },
   title: {
     flexGrow: 1,
@@ -53,7 +80,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 10,
   },
   search: {
-    position: "relative",
+    position: "absolute",
+    top: "60%",
+    left: "50%",
+    transform: " translate(-50%, -50%)",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
@@ -61,8 +91,7 @@ const useStyles = makeStyles((theme) => ({
     },
     marginBottom: 10,
     width: 500,
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
+    [theme.breakpoints.down("sm")]: {
       width: "auto",
     },
   },
@@ -83,6 +112,15 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: 500,
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto",
+    },
+  },
+  "@media (max-width: 800px)": {
+    flexContainer: {
+      flexDirection: "column",
+    },
   },
 }));
 
@@ -97,6 +135,33 @@ const App = () => {
   const [showSearch, setShowSearch] = useState(true);
   const [fade, setFade] = useState(false);
   const [back, setBack] = useState(false);
+
+  const Copyright = () => {
+    return (
+      <Typography variant="subtitle1" color="textSecondary" align="center">
+        <Grid container className={classes.copyright}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2">
+              Made with <FavoriteIcon fontSize="small" color="secondary" /> by
+              Mikaella Picones
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2">
+              Icons made by&nbsp;
+              <Link
+                href="https://www.flaticon.com/authors/freepik"
+                title="Freepik"
+                textDecoration="none"
+              >
+                Freepik
+              </Link>
+            </Typography>
+          </Grid>
+        </Grid>
+      </Typography>
+    );
+  };
 
   const theme = createMuiTheme({
     palette: {
@@ -142,77 +207,83 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Paper>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Box className={classes.menu}>
-            <Typography variant="h6" className={classes.title}>
-              {back ? (
-                <IconButton
-                  aria-label="delete"
-                  className={classes.margin}
-                  onClick={refreshPage}
-                >
-                  <ArrowBackIcon fontSize="large" />
-                </IconButton>
-              ) : (
-                ""
-              )}
-            </Typography>
-            <Toolbar>
-              <Switch
-                className={classes.btnToggle}
-                checked={darkMode}
-                onChange={() => setDarkMode(!darkMode)}
-                color="primary"
-              />
-            </Toolbar>
-          </Box>
-        </AppBar>
-        <Box className={classes.container}>
-          <Box className={classes.item}>
-            {showSearch ? (
-              <Box component="div" className={classes.search}>
-                {/* <Avatar
-                  variant="square"
-                  className={classes.square}
-                  src={weatherIcon}
-                /> */}
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
-                </div>
-                <InputBase
-                  placeholder="Search..."
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
-                  inputProps={{ "aria-label": "search" }}
-                  onChange={(e) => {
-                    setQuery(e.target.value);
-                  }}
-                  value={query}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      setFade(true);
-                      setShowWeatherCard(true);
-                      setShowSearch(false);
-                      setBack(true);
-                      search();
-                    }
-                  }}
+      <Paper elevation={0}>
+        <Box component="div" overflow="hidden" className={classes.body}>
+          <AppBar position="static" color="transparent" elevation={0}>
+            <Box className={classes.menu}>
+              <Typography variant="h6" className={classes.title}>
+                {back ? (
+                  <IconButton
+                    aria-label="delete"
+                    className={classes.margin}
+                    onClick={refreshPage}
+                  >
+                    <ArrowBackIcon fontSize="large" />
+                  </IconButton>
+                ) : (
+                  ""
+                )}
+              </Typography>
+              <Toolbar>
+                <Switch
+                  className={classes.btnToggle}
+                  checked={darkMode}
+                  onChange={() => setDarkMode(!darkMode)}
+                  color="primary"
                 />
-              </Box>
-            ) : null}
-            {showWeatherCard ? (
-              <Fade in={fade} timeout={duration}>
-                <Paper elevation={0}>
-                  <Box component="div" className={classes.card}>
-                    <WeatherCard weather={weather} forecast={forecast} />
+              </Toolbar>
+            </Box>
+          </AppBar>
+          <Box
+            className={classes.container}
+            style={{
+              height: showSearch === true ? "100vh" : "auto",
+            }}
+          >
+            <Box className={classes.item}>
+              {showSearch ? (
+                <Box>
+                  <img src={movingclouds} className={classes.image} />
+                  <Box component="div" className={classes.search}>
+                    <Box component="div" className={classes.searchIcon}>
+                      <SearchIcon />
+                    </Box>
+                    <InputBase
+                      placeholder="Enter a city (ex. 'Tokyo, JP', 'Macau, China')"
+                      classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                      }}
+                      inputProps={{ "aria-label": "search" }}
+                      onChange={(e) => {
+                        setQuery(e.target.value);
+                      }}
+                      value={query}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          setFade(true);
+                          setShowWeatherCard(true);
+                          setShowSearch(false);
+                          setBack(true);
+                          search();
+                        }
+                      }}
+                    />
                   </Box>
-                </Paper>
-              </Fade>
-            ) : null}
+                </Box>
+              ) : null}
+              {showWeatherCard ? (
+                <Fade in={fade} timeout={duration}>
+                  <Paper elevation={0}>
+                    <Box component="div" className={classes.card}>
+                      <WeatherCard weather={weather} forecast={forecast} />
+                    </Box>
+                  </Paper>
+                </Fade>
+              ) : null}
+            </Box>
           </Box>
+          <Copyright />
         </Box>
       </Paper>
     </ThemeProvider>
@@ -230,6 +301,7 @@ function getWeather(query) {
     .then((weather) => {
       if (Object.entries(weather).length) {
         const mappedData = mapDataToWeatherInterface(weather);
+        console.log(weather);
         return mappedData;
       }
     });
@@ -259,6 +331,7 @@ function handleResponse(response) {
 
 function mapDataToWeatherInterface(data) {
   const mapped = {
+    main: data.main,
     city: data.name,
     country: data.sys.country,
     date: data.dt * 1000,
